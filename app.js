@@ -36,7 +36,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     const key = `${agent}/${sender}/${uuidFile}.${originalNameExtension}`
 
     await s3.upload(buffer, key);
-    res.json({uuid:uuidFile, fileUrl: `https://${process.env.BUCKET_NAME}.s3-us-west-2.amazonaws.com/${key}`});
+    res.json({uuid:uuidFile, key:key, fileUrl: `https://${process.env.BUCKET_NAME}.s3-us-west-2.amazonaws.com/${key}`});
 });
 
 app.get('/image', async (req, res) => {
