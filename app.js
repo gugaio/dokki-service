@@ -3,8 +3,11 @@
 const express = require('express');
 const multer = require('multer');
 const cors = require('cors');
-const s3 = require('./s3');
+const s3 = require('./services/aws/s3.js');
+const db = require('./services/aws/dynamo.js');
 const uuid = require('uuid').v4;
+
+const uploaderService = require('./uploaderService.js');
 
 
 require('dotenv').config();
@@ -25,26 +28,22 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({storage: storage, fileFilter: fileFilter});
 
 // ROUTES
-app.post('/upload', upload.single('file'), async (req, res) => {
-    console.log('Upload request received');
+app.post('/upload', upload.single('file'), async (req, res) => {    
     const { buffer, originalname } = req.file;
-
-    const agent = req.query.agent;
-    const sender = req.query.sender;
-    const originalNameExtension = originalname.split('.')[1];
-    const uuidFile = uuid();        
-    const key = `${agent}/${sender}/${uuidFile}.${originalNameExtension}`
-
-    await s3.upload(buffer, key);
-    res.json({uuid:uuidFile, key:key, fileUrl: `https://${process.env.BUCKET_NAME}.s3-us-west-2.amazonaws.com/${key}`});
+    uploaderService.upload(originalname, buffer).then((data) => {
+        res.json({uuid: data.uuidKey});
+    }).catch((err) => {
+        res.json(err);
+    });
 });
 
-app.get('/image', async (req, res) => {
-    console.log('Dowload image request received');
-    const agent = req.query.agent;
-    const sender = req.query.sender;
-    const filename = req.query.filename;
-    s3.downloadImage(agent, sender, filename).then((data) => {
+app.get('/image/:uuid', async (req, res) => {
+    const docId  = req.params.id;
+
+    console.log(`Dowload image request received for ${key}`);
+
+
+    s3.downloadImage(key).then((data) => {
         res.send(data);
     }).catch((err) => {
         res.json(err);

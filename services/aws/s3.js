@@ -13,37 +13,22 @@ exports.upload = async (buffer, key) => {
         Key: key,
         Body: buffer
     };
-    return await s3.upload(params).promise();
+    await s3.upload(params).promise();
 };
 
-exports.downloadImage = async (agent, sender, filename) => {
+exports.download = async (key) => {
     const s3 = new AWS.S3();
-    const key = `${agent}/${sender}/${filename}`;
     const params = {
         Bucket: BUCKET_NAME,
         Key: key
     };
 
-    return new Promise((resolve, reject) => {
-        s3.getObject(params, (err, data) => {
-            if (err) {
-                reject(err);
-              } else {
-                try {
-                  resolve(data.Body);
-                } catch (parseError) {
-                  reject(parseError);
-                }
-              }
-        });
-
-    });
-
+    const result = await s3.getObject(params).promise();
+    return result.Body;
 };
 
-exports.downloadJson = async (agent, sender, filename) => {
+exports.downloadJson = async (key) => {
     const s3 = new AWS.S3();
-    const key = `${agent}/${sender}/${filename}`;
     console.log(key);
     const params = {
         Bucket: BUCKET_NAME,
@@ -71,11 +56,11 @@ exports.downloadJson = async (agent, sender, filename) => {
 };
 
 
-exports.uploadJson = async (json, agent, sender, uuidFile) => {
+exports.uploadJson = async (json, key) => {
     const s3 = new AWS.S3();
     const params = {
         Bucket: BUCKET_NAME,
-        Key: `${agent}/${sender}/${uuidFile}.json`,
+        Key: key,
         Body: JSON.stringify(json),
         ContentType: "application/json"
     };
