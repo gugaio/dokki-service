@@ -55,16 +55,16 @@ describe('POST /upload', () => {
 describe('GET /download', () => {
 
     it('should return the file URL', async () => {
-      const key = TEST_UUID;
-      const response = Buffer.from('test');
-  
-      const res = await request(app)
+        const key = TEST_UUID;
+        const response = Buffer.from('test');
+
+        const res = await request(app)
         .get(`/download/${key}`);
-  
-      expect(res.status).toBe(200);
-      expect(downloaderService.downloadDocument).toHaveBeenCalledTimes(1);
-      expect(downloaderService.downloadDocument).toHaveBeenCalledWith(key);
-      expect(res.body).toEqual(response);
+
+        expect(res.status).toBe(200);
+        expect(downloaderService.downloadDocument).toHaveBeenCalledTimes(1);
+        expect(downloaderService.downloadDocument).toHaveBeenCalledWith(key);
+        expect(res.body).toEqual(response);
     });
-  
-  });
+
+});
