@@ -1,14 +1,31 @@
 const request = require('supertest');
 const app = require('./app');
+const downloaderService = require('./services/downloaderService.js');
 const uploaderService = require('./services/uploaderService.js');
 
 const TEST_UUID = '123456789';
+const TEST_FILE_CONTENTS = Buffer.from('test');
 
 jest.mock('./services/uploaderService', () => ({
-    upload: jest.fn().mockResolvedValue({ uuidKey: TEST_UUID}),
+    upload: jest.fn().mockResolvedValue({ uuidKey: '123456789'}),
+}));
+
+jest.mock('./services/downloaderService', () => ({
+    downloadDocument: jest.fn().mockResolvedValue(Buffer.from('test')),
 }));
 
 describe('POST /upload', () => {
+
+    beforeAll((done) => {
+        server = app.listen(3000, () => {
+            console.log('Server started on port 3000');
+            done();
+        });
+    });
+
+    afterAll((done) => {
+        server.close(done);
+    });
 
   it('should upload a file to S3 and return the file URL', async () => {
     const filename = 'test.jpg';
@@ -33,3 +50,21 @@ describe('POST /upload', () => {
     expect(res.body).toEqual({ error: 'No file uploaded' });
   });
 });
+
+
+describe('GET /download', () => {
+
+    it('should return the file URL', async () => {
+      const key = TEST_UUID;
+      const response = Buffer.from('test');
+  
+      const res = await request(app)
+        .get(`/download/${key}`);
+  
+      expect(res.status).toBe(200);
+      expect(downloaderService.downloadDocument).toHaveBeenCalledTimes(1);
+      expect(downloaderService.downloadDocument).toHaveBeenCalledWith(key);
+      expect(res.body).toEqual(response);
+    });
+  
+  });

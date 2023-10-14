@@ -67,11 +67,14 @@ app.get('/ping', (req, res) => {
     res.send('pong');
 });
 
-// Start the server
-const PORT = 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
 
 module.exports = app;
+
+if (require.main === module) {
+    // If this module is run directly (not imported), start the server
+    const port = process.env.PORT || 3000;
+    app.listen(port, () => {
+      console.log(`Server is running on port ${port}`);
+    });
+  }
   
