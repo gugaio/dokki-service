@@ -3,11 +3,9 @@
 const express = require('express');
 const multer = require('multer');
 const cors = require('cors');
-const s3 = require('./services/aws/s3.js');
-const db = require('./services/aws/dynamo.js');
-const uuid = require('uuid').v4;
 
-const uploaderService = require('./uploaderService.js');
+const uploaderService = require('./services/uploaderService');
+const downloaderService = require('./services/downloaderService');
 
 
 require('dotenv').config();
@@ -28,22 +26,24 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({storage: storage, fileFilter: fileFilter});
 
 // ROUTES
-app.post('/upload', upload.single('file'), async (req, res) => {    
+app.post('/upload', upload.single('file'), async (req, res) => {
+    if (!req.file) {
+        res.status(400).json({error: 'No file uploaded'});
+        return;
+    }
+    console.log(`Upload request received for ${req.file.originalname}`);
     const { buffer, originalname } = req.file;
     uploaderService.upload(originalname, buffer).then((data) => {
-        res.json({uuid: data.uuidKey});
+        res.json({id: data.uuidKey});
     }).catch((err) => {
         res.json(err);
     });
 });
 
-app.get('/image/:uuid', async (req, res) => {
-    const docId  = req.params.id;
-
-    console.log(`Dowload image request received for ${key}`);
-
-
-    s3.downloadImage(key).then((data) => {
+app.get('/download/:id', async (req, res) => {
+    const id  = req.params.id;
+    console.log(`Dowload image request received for ${id}`);
+    downloaderService.downloadDocument(id).then((data) => {
         res.send(data);
     }).catch((err) => {
         res.json(err);
@@ -72,3 +72,6 @@ const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+module.exports = app;
+  

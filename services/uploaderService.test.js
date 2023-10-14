@@ -31,7 +31,7 @@ describe('uploaderService', () => {
       uuid.v4.mockReturnValue(MOCK_UUID_KEY);
       
       const EXPECTED_S3_KEY = `${PREFIX}/${MOCK_UUID_KEY}.jpg`;
-      const EXPECTED_RESULT =  {"s3Key": EXPECTED_S3_KEY, "uuidKey": MOCK_UUID_KEY}
+      const EXPECTED_RESULT =  {"uuidKey": MOCK_UUID_KEY};
 
       let result = await uploaderService.upload(FILEPATH, BUFFER, PREFIX);
 
