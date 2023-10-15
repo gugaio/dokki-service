@@ -5,6 +5,8 @@ const dynamoDB = require('./aws/dynamo');
 async function upload(originalName, buffer, prefix='dataset') {
   const {uuidKey,s3Key} = _generateS3Key(originalName);
 
+  console.log(`Upload request received for ${originalName} with key ${uuidKey}`);
+
   function _generateS3Key(originalName) {
     const originalNameExtension = originalName.split('.')[1];
     const uuidFile = uuid();

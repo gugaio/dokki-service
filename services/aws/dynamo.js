@@ -11,7 +11,7 @@ exports.insert = async (uuid, filepath) => {
   const params = {
     TableName: TABLE_NAME,
     Item: {
-      id: uuid,
+      docid: uuid,
       filepath: filepath
     },
   };
@@ -21,13 +21,19 @@ exports.insert = async (uuid, filepath) => {
 
 exports.get = async (uuid) => {
   const docClient = new AWS.DynamoDB.DocumentClient();
+  console.log(`Getting ${uuid}`);
   const params = {
     TableName: TABLE_NAME,
-    Item: {
-      id: uuid
-    },
+    Key: {
+      docid: uuid
+    }
   };
 
-  let result = await docClient.get(params).promise();
-  return result.Item;
+  try {
+    let result = await docClient.get(params).promise();
+    return result.Item;
+  } catch (error) {
+    console.error(`Error getting ${uuid}: ${error}`);
+    throw error;
+  }
 };

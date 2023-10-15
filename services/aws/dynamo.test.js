@@ -35,7 +35,7 @@ describe('dynamo', () => {
 
       const expectedParams = {
         TableName: 'document',
-        Item: {id: FAKE_ITEM.id, filepath: FILEPATH}
+        Item: {docid: FAKE_ITEM.id, filepath: FILEPATH}
       };
       
       await dynamo.insert(FAKE_ITEM.id, FILEPATH);
@@ -51,8 +51,8 @@ describe('dynamo', () => {
       
       const expectedParams = {
         TableName: 'document',
-        Item: {
-          id: FAKE_ITEM.id
+        Key: {
+          docid: FAKE_ITEM.id
         }
       };
       

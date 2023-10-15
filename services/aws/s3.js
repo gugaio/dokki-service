@@ -6,7 +6,7 @@ const BUCKET_NAME = process.env.BUCKET_NAME || 'notas-dev-s3';
 
 AWS.config.update({ region: 'us-west-2', accessKeyId: AWS_ACCESS_KEY_ID, secretAccessKey: AWS_SECRET_ACCESS_KEY });
 
-exports.upload = async (buffer, key) => {
+exports.upload = async (key, buffer) => {
     const s3 = new AWS.S3();
     const params = {
         Bucket: BUCKET_NAME,
@@ -18,6 +18,7 @@ exports.upload = async (buffer, key) => {
 
 exports.download = async (key) => {
     const s3 = new AWS.S3();
+    console.log(`Downloading ${key}`);
     const params = {
         Bucket: BUCKET_NAME,
         Key: key

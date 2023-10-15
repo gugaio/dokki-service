@@ -31,7 +31,7 @@ describe('s3', () => {
       uuid.v4.mockReturnValue(MOCK_UUID_KEY);
       const S3_KEY = `${PREFIX}/${MOCK_UUID_KEY}.jpg`;      
 
-      await s3.upload(buffer, S3_KEY);
+      await s3.upload(S3_KEY, buffer);
 
       expect(AWS.S3).toHaveBeenCalledTimes(1);
       expect(AWS.S3().upload).toHaveBeenCalledTimes(1);
