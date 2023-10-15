@@ -6,7 +6,7 @@ const MOCK_S3_FILEPATH = 'dataset/9999.jpg';
 const MOCK_FILE_CONTENTS = 'file contents';
 
 jest.mock('./aws/dynamo', () => {
-  return { get: jest.fn().mockResolvedValue({filepath: 'dataset/9999.jpg'})};
+  return { get: jest.fn().mockResolvedValue({S3Path: 'dataset/9999.jpg'})};
 });
 
 jest.mock('./aws/s3', () => {

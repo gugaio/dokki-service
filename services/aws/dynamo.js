@@ -12,7 +12,7 @@ exports.insert = async (uuid, filepath) => {
     TableName: TABLE_NAME,
     Item: {
       docid: uuid,
-      filepath: filepath
+      S3Path: filepath
     },
   };
 

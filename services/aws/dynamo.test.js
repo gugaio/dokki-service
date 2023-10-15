@@ -6,7 +6,7 @@ jest.mock('uuid', () => ({
   v4: jest.fn(),
 }));
 
-const FAKE_ITEM = {id: 'adc83ea4-20f7-4ef5-a53a-51f35bda5979', filepath: 'path.jpg'};
+const FAKE_ITEM = {docid: 'adc83ea4-20f7-4ef5-a53a-51f35bda5979', S3Path: 'path.jpg'};
 
 jest.mock('aws-sdk', () => {
   return {
@@ -35,7 +35,7 @@ describe('dynamo', () => {
 
       const expectedParams = {
         TableName: 'document',
-        Item: {docid: FAKE_ITEM.id, filepath: FILEPATH}
+        Item: {docid: FAKE_ITEM.id, S3Path: FILEPATH}
       };
       
       await dynamo.insert(FAKE_ITEM.id, FILEPATH);
