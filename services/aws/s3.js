@@ -6,12 +6,13 @@ const BUCKET_NAME = process.env.BUCKET_NAME || 'notas-dev-s3';
 
 AWS.config.update({ region: 'us-west-2', accessKeyId: AWS_ACCESS_KEY_ID, secretAccessKey: AWS_SECRET_ACCESS_KEY });
 
-exports.upload = async (key, buffer) => {
+exports.upload = async (key, buffer, contentType) => {
     const s3 = new AWS.S3();
     const params = {
         Bucket: BUCKET_NAME,
         Key: key,
-        Body: buffer
+        Body: buffer,
+        ContentType: contentType
     };
     await s3.upload(params).promise();
 };

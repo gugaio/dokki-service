@@ -25,6 +25,7 @@ describe('uploaderService', () => {
     it('should upload file and insert into dynamo', async () => {
       const FILEPATH = 'path.jpg';
       const BUFFER = 'file contents';
+      const CONTENT_TYPE = 'image/jpg';
       const PREFIX = 'dataset';
 
       const MOCK_UUID_KEY = 'adc83ea4-20f7-4ef5-a53a-51f35bda5979';
@@ -36,7 +37,7 @@ describe('uploaderService', () => {
       let result = await uploaderService.upload(FILEPATH, BUFFER, PREFIX);
 
       expect(s3.upload).toHaveBeenCalledTimes(1);
-      expect(s3.upload).toHaveBeenCalledWith(EXPECTED_S3_KEY, BUFFER);
+      expect(s3.upload).toHaveBeenCalledWith(EXPECTED_S3_KEY, BUFFER, CONTENT_TYPE);
       expect(dynamoDB.insert).toHaveBeenCalledTimes(1);
       expect(dynamoDB.insert).toHaveBeenCalledWith(MOCK_UUID_KEY,EXPECTED_S3_KEY);
       expect(result).toEqual(EXPECTED_RESULT);
