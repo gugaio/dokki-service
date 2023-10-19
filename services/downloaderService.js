@@ -10,6 +10,12 @@ async function downloadDocument(key) {
   return result;
 }
 
+async function listDataset() {
+  let items = await dynamoDB.scan('labels');
+  return items;
+}
+
 module.exports = {
-  downloadDocument
+  downloadDocument,
+  listDataset
 };

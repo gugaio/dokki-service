@@ -65,5 +65,32 @@ describe('dynamo', () => {
     });
   });
 
+  it('should update OCR and labels for a document', async () => {
+    const docid = 'example_docid';
+    const ocr = 'example_ocr';
+    const labels = ['example_label1', 'example_label2'];
+    const updateMock = jest.fn().mockReturnValue({ promise: jest.fn() });
+    AWS.DynamoDB.DocumentClient.mockImplementation(() => ({
+      update: updateMock
+    }));
+
+    await dynamo.updateOCR(docid, ocr, labels);
+
+    expect(AWS.DynamoDB.DocumentClient).toHaveBeenCalledTimes(1);
+    expect(AWS.DynamoDB.DocumentClient).toHaveBeenCalledWith();
+    expect(updateMock).toHaveBeenCalledTimes(1);
+    expect(updateMock).toHaveBeenCalledWith({
+      TableName: 'document',
+      Key: {
+        'docid': docid
+      },
+      UpdateExpression: 'SET ocr = :ocr, labels = :labels',
+      ExpressionAttributeValues: {
+        ':ocr': ocr,
+        ':labels': labels
+      }
+    });
+  });
+
 
 });

@@ -37,3 +37,41 @@ exports.get = async (uuid) => {
     throw error;
   }
 };
+
+
+exports.scan = async (fieldName) => {
+  const docClient = new AWS.DynamoDB.DocumentClient();
+  const params = {
+    TableName: TABLE_NAME,
+    Key: {
+      FilterExpression: `attribute_exists(${fieldName})`
+    }
+  };
+
+  try {
+    let result = await docClient.scan(params).promise();
+    const ids = result.Items.map(item => item.docid);
+    return ids;
+  } catch (error) {
+    console.error(`Error getting ${error}`);
+    throw error;
+  }
+};
+
+exports.updateOCR = async (docid, ocr, labels) => {
+  const docClient = new AWS.DynamoDB.DocumentClient();
+  
+  const params = {
+    TableName: TABLE_NAME,
+    Key: {
+      'docid': docid
+    },
+    UpdateExpression: 'SET ocr = :ocr, labels = :labels',
+    ExpressionAttributeValues: {
+      ':ocr': ocr,
+      ':labels': labels
+    }
+  };
+
+  await docClient.update(params).promise();
+};

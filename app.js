@@ -6,12 +6,15 @@ const cors = require('cors');
 
 const uploaderService = require('./services/uploaderService');
 const downloaderService = require('./services/downloaderService');
+const labelsService = require('./services/labelsService');
 
 
 require('dotenv').config();
 
 const app = express();
 app.use(cors());
+app.use(express.json());
+
 
 // MULTER CONFIG: to get file photos to temp server storage
 const storage = multer.memoryStorage();
@@ -50,13 +53,30 @@ app.get('/download/:id', async (req, res) => {
     });
 });
 
-app.get('/download', async (req, res) => {
-    console.log('Dowload request received');
-    console.log(req.query);
-    const agent = req.query.agent;
-    const sender = req.query.sender;
-    const uuidFile = req.query.uuid;
-    s3.downloadJson(agent, sender, uuidFile).then((data) => {
+app.post('/labels/:id', async (req, res) => {
+    const id  = req.params.id;    
+    console.log(`Update OCR and labels for ${id}`);
+    const jsonData = req.body;
+    labelsService.updateOCR(id, jsonData.ocr, jsonData.labels).then(() => {
+        res.send('OK');
+    }).catch((err) => {
+        res.json(err);
+    });
+});
+
+app.get('/labels/:id', async (req, res) => {
+    const id  = req.params.id;    
+    console.log(`Get OCR and labels for ${id}`);
+    const jsonData = req.body;
+    labelsService.getLabels(id).then((data) => {
+        res.json(data);
+    }).catch((err) => {
+        res.json(err);
+    });
+});
+
+app.get('/dataset/', async (req, res) => {
+    downloaderService.listDataset().then((data) => {
         res.json(data);
     }).catch((err) => {
         res.json(err);
