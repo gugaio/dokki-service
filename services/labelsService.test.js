@@ -23,7 +23,6 @@ describe('labelService', () => {
 
   describe('upload', () => {
     it('should upload file and insert into dynamo', async () => {
-      const FILEPATH = 'path.jpg';
       const OCR = {};
       const LABELS = {};
 
