@@ -1,4 +1,4 @@
-const labelService = require('./labelService');
+const labelService = require('./labelsService');
 const s3 = require('./aws/s3');
 const dynamoDB = require('./aws/dynamo');
 
@@ -13,7 +13,7 @@ jest.mock('./aws/s3', () => {
 });
 
 jest.mock('./aws/dynamo', () => {
-  return { insert: jest.fn()};
+  return { insert: jest.fn(), updateOCR: jest.fn()};
 });
 
 describe('labelService', () => {
@@ -24,23 +24,17 @@ describe('labelService', () => {
   describe('upload', () => {
     it('should upload file and insert into dynamo', async () => {
       const FILEPATH = 'path.jpg';
-      const BUFFER = 'file contents';
-      const CONTENT_TYPE = 'image/jpg';
-      const PREFIX = 'dataset';
+      const OCR = {};
+      const LABELS = {};
 
       const MOCK_UUID_KEY = 'adc83ea4-20f7-4ef5-a53a-51f35bda5979';
       uuid.v4.mockReturnValue(MOCK_UUID_KEY);
       
-      const EXPECTED_S3_KEY = `${PREFIX}/${MOCK_UUID_KEY}.jpg`;
-      const EXPECTED_RESULT =  {"uuidKey": MOCK_UUID_KEY};
 
-      let result = await labelService.upload(FILEPATH, BUFFER, PREFIX);
+      await labelService.updateOCR(MOCK_UUID_KEY, OCR, LABELS);
 
-      expect(s3.upload).toHaveBeenCalledTimes(1);
-      expect(s3.upload).toHaveBeenCalledWith(EXPECTED_S3_KEY, BUFFER, CONTENT_TYPE);
-      expect(dynamoDB.insert).toHaveBeenCalledTimes(1);
-      expect(dynamoDB.insert).toHaveBeenCalledWith(MOCK_UUID_KEY,EXPECTED_S3_KEY);
-      expect(result).toEqual(EXPECTED_RESULT);
+      expect(dynamoDB.updateOCR).toHaveBeenCalledTimes(1);
+      expect(dynamoDB.updateOCR).toHaveBeenCalledWith(MOCK_UUID_KEY, OCR, LABELS);
     });
   });
 });

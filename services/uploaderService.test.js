@@ -39,7 +39,7 @@ describe('uploaderService', () => {
       expect(s3.upload).toHaveBeenCalledTimes(1);
       expect(s3.upload).toHaveBeenCalledWith(EXPECTED_S3_KEY, BUFFER, CONTENT_TYPE);
       expect(dynamoDB.insert).toHaveBeenCalledTimes(1);
-      expect(dynamoDB.insert).toHaveBeenCalledWith(MOCK_UUID_KEY,EXPECTED_S3_KEY);
+      expect(dynamoDB.insert).toHaveBeenCalledWith(MOCK_UUID_KEY, FILEPATH, EXPECTED_S3_KEY);
       expect(result).toEqual(EXPECTED_RESULT);
     });
   });

@@ -6,12 +6,13 @@ const TABLE_NAME = 'document';
 
 AWS.config.update({ region: 'us-west-2', accessKeyId: AWS_ACCESS_KEY_ID, secretAccessKey: AWS_SECRET_ACCESS_KEY });
 
-exports.insert = async (uuid, filepath) => {
+exports.insert = async (uuid, originalName, filepath) => {
   const docClient = new AWS.DynamoDB.DocumentClient();
   const params = {
     TableName: TABLE_NAME,
     Item: {
       docid: uuid,
+      originalName: originalName,
       S3Path: filepath
     },
   };

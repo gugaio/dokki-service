@@ -31,14 +31,16 @@ describe('dynamo', () => {
 
   describe('insert', () => {
     it('should insert key into table', async () => {
-      const FILEPATH = `path.jpg`;
+      const FILEPATH = `dataset/path.jpg`;
+      const ORIGINAL_NAME = `path.jpg`;
 
       const expectedParams = {
         TableName: 'document',
-        Item: {docid: FAKE_ITEM.id, S3Path: FILEPATH}
+        Item: {docid: FAKE_ITEM.id, S3Path: FILEPATH, originalName: ORIGINAL_NAME},
+        
       };
       
-      await dynamo.insert(FAKE_ITEM.id, FILEPATH);
+      await dynamo.insert(FAKE_ITEM.id, ORIGINAL_NAME, FILEPATH);
 
       expect(AWS.DynamoDB.DocumentClient).toHaveBeenCalledTimes(1);
       expect(AWS.DynamoDB.DocumentClient().put).toHaveBeenCalledTimes(1);
