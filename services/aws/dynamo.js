@@ -51,7 +51,9 @@ exports.scan = async (fieldName) => {
 
   try {
     let result = await docClient.scan(params).promise();
-    const ids = result.Items.map(item => item.docid);
+    const ids = result.Items.map(item => {
+      return {id: item.docid, originalName: item.originalName}
+    });
     return ids;
   } catch (error) {
     console.error(`Error getting ${error}`);
