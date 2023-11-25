@@ -13,7 +13,8 @@ exports.insert = async (uuid, originalName, filepath) => {
     Item: {
       docid: uuid,
       originalName: originalName,
-      S3Path: filepath
+      S3Path: filepath,
+      updateTime: new Date().toISOString()
     },
   };
 
@@ -52,7 +53,7 @@ exports.scan = async (fieldName) => {
   try {
     let result = await docClient.scan(params).promise();
     const ids = result.Items.map(item => {
-      return {id: item.docid, originalName: item.originalName}
+      return {id: item.docid, originalName: item.originalName, s3Path: item.S3Path, docType: item.docType}
     });
     return ids;
   } catch (error) {
@@ -61,7 +62,28 @@ exports.scan = async (fieldName) => {
   }
 };
 
-exports.updateOCR = async (docid, ocr, labels) => {
+exports.scanTextMistakes = async () => {
+  const docClient = new AWS.DynamoDB.DocumentClient();
+  const params = {
+    TableName: TABLE_NAME,
+    Key: {
+      FilterExpression: `attribute_exists(textMistakes)`
+    }
+  };
+
+  try {
+    let result = await docClient.scan(params).promise();
+    const ids = result.Items.map(item => {
+      return {id: item.docid, originalName: item.originalName, s3Path: item.S3Path, docType: item.docType, textMistakes: item.textMistakes}
+    });
+    return ids;
+  } catch (error) {
+    console.error(`Error getting ${error}`);
+    throw error;
+  }
+};
+
+exports.updateOCR = async (docid, docType, ocr, labels, textMistakes) => {
   const docClient = new AWS.DynamoDB.DocumentClient();
   
   const params = {
@@ -69,10 +91,13 @@ exports.updateOCR = async (docid, ocr, labels) => {
     Key: {
       'docid': docid
     },
-    UpdateExpression: 'SET ocr = :ocr, labels = :labels',
+    UpdateExpression: 'SET ocr = :ocr, labels = :labels, textMistakes = :textMistakes, docType = :docType, updateTime = :updateTime',
     ExpressionAttributeValues: {
       ':ocr': ocr,
-      ':labels': labels
+      ':labels': labels,
+      ':textMistakes': textMistakes,
+      ':docType': docType,
+      ':updateTime': new Date().toISOString()
     }
   };
 

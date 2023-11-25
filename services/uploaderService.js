@@ -16,7 +16,7 @@ async function upload(originalName, buffer, prefix='dataset') {
 
   await s3.upload(s3Key, buffer, contentType);
   await dynamoDB.insert(uuidKey, originalName, s3Key);
-  return {uuidKey:uuidKey};
+  return {uuidKey:uuidKey, s3Key:s3Key};
 }
 
 module.exports = {

@@ -15,7 +15,13 @@ async function listDataset() {
   return items;
 }
 
+async function listOcrMistakes() {
+  let items = await dynamoDB.scanTextMistakes();
+  return items; 
+}
+
 module.exports = {
   downloadDocument,
-  listDataset
+  listDataset,
+  listOcrMistakes
 };

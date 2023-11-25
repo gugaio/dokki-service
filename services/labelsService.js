@@ -1,12 +1,12 @@
 const dynamoDB = require('./aws/dynamo');
 
-async function updateOCR(docid, ocr, labels) {
-  await dynamoDB.updateOCR(docid, ocr, labels);  
+async function updateOCR(docid, docType, ocr, labels, textMistakes) {
+  await dynamoDB.updateOCR(docid, docType, ocr, labels, textMistakes);  
 }
 
 async function getLabels(docid) {
   const result = await dynamoDB.get(docid);
-  return {ocr: result.ocr, labels: result.labels};
+  return {ocr: result.ocr, labels: result.labels, textMistakes: result.textMistakes, docType: result.docType};
 }
 
 module.exports = {
