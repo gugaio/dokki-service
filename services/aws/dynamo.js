@@ -74,7 +74,7 @@ exports.scanTextMistakes = async () => {
   try {
     let result = await docClient.scan(params).promise();
     const ids = result.Items.map(item => {
-      return {id: item.docid, originalName: item.originalName, s3Path: item.S3Path, docType: item.docType, textMistakes: item.textMistakes}
+      return {id: item.docid, originalName: item.originalName, s3Path: item.S3Path, docType: item.docType, textMistakes: item.textMistakes, ocr: item.ocr}
     });
     return ids;
   } catch (error) {
