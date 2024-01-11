@@ -1,20 +1,22 @@
 const AWS = require('aws-sdk');
+const datetimeService = require('../datetimeService');
 
 const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
 const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
 const TABLE_NAME = 'document';
+const AWS_REGION = process.env.AWS_REGION || 'us-west-2';
 
-AWS.config.update({ region: 'us-west-2', accessKeyId: AWS_ACCESS_KEY_ID, secretAccessKey: AWS_SECRET_ACCESS_KEY });
+AWS.config.update({ region: AWS_REGION, accessKeyId: AWS_ACCESS_KEY_ID, secretAccessKey: AWS_SECRET_ACCESS_KEY });
 
-exports.insert = async (uuid, originalName, filepath) => {
+exports.insert = async (uuid, originalName, s3FilePath) => {
   const docClient = new AWS.DynamoDB.DocumentClient();
   const params = {
     TableName: TABLE_NAME,
     Item: {
       docid: uuid,
       originalName: originalName,
-      S3Path: filepath,
-      updateTime: new Date().toISOString()
+      S3Path: s3FilePath,
+      updateTime: datetimeService.currentDatetime().toISOString()
     },
   };
 

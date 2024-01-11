@@ -1,15 +1,16 @@
 const AWS = require('aws-sdk');
 
+const AWS_REGION = process.env.AWS_REGION || 'us-west-2';
 const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
 const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
-const BUCKET_NAME = process.env.BUCKET_NAME || 'notas-dev-s3';
+const DEFAULT_BUCKET_NAME = process.env.BUCKET_NAME || 'notas-dev-s3';
 
-AWS.config.update({ region: 'us-west-2', accessKeyId: AWS_ACCESS_KEY_ID, secretAccessKey: AWS_SECRET_ACCESS_KEY });
+AWS.config.update({ region: AWS_REGION, accessKeyId: AWS_ACCESS_KEY_ID, secretAccessKey: AWS_SECRET_ACCESS_KEY });
 
-exports.upload = async (key, buffer, contentType) => {
+exports.upload = async (key, buffer, contentType, bucket = DEFAULT_BUCKET_NAME) => {
     const s3 = new AWS.S3();
     const params = {
-        Bucket: BUCKET_NAME,
+        Bucket: bucket,
         Key: key,
         Body: buffer,
         ContentType: contentType
@@ -17,11 +18,11 @@ exports.upload = async (key, buffer, contentType) => {
     await s3.upload(params).promise();
 };
 
-exports.download = async (key) => {
+exports.download = async (key, bucket = DEFAULT_BUCKET_NAME) => {
     const s3 = new AWS.S3();
     console.log(`Downloading ${key}`);
     const params = {
-        Bucket: BUCKET_NAME,
+        Bucket: bucket,
         Key: key
     };
 
@@ -29,11 +30,13 @@ exports.download = async (key) => {
     return result.Body;
 };
 
-exports.downloadJson = async (key) => {
+exports.DEFAULT_BUCKET_NAME = DEFAULT_BUCKET_NAME;
+
+exports.downloadJson = async (key, bucket = DEFAULT_BUCKET_NAME) => {
     const s3 = new AWS.S3();
     console.log(key);
     const params = {
-        Bucket: BUCKET_NAME,
+        Bucket: bucket,
         Key: key
     };
 
