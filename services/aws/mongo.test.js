@@ -1,6 +1,6 @@
 // @/mongo.test.js
 const mongoose = require('mongoose');
-const { MongoMemoryServer } = require('mongodb-memory-server');
+const {MongoMemoryServer} = require('mongodb-memory-server');
 const mongo = require('./mongo');
 
 describe('Mongo Test', () => {
@@ -10,7 +10,7 @@ describe('Mongo Test', () => {
         mongoServer = new MongoMemoryServer();
         await mongoServer.start()
         const mongoUri = await mongoServer.getUri();
-        await mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true });
+        await mongoose.connect(mongoUri, {useNewUrlParser: true, useUnifiedTopology: true});
     });
 
     it('insert & get document successfully', async () => {
@@ -56,7 +56,7 @@ describe('Mongo Test', () => {
         const rawOcr = 'test';
         const mistakes = 'a=xxx';
 
-        const savedOcr = await mongo.ocr.insert(uuid, rawOcr);
+        await mongo.ocr.insert(uuid, rawOcr);
         await mongo.ocr.updateMistakes(uuid, mistakes);
 
         // Object Id should be defined when successfully saved to MongoDB.

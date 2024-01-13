@@ -1,6 +1,6 @@
-//server.js
+//  server.js
 const connect = require('./db/conn');
-const app = require("./app");
+const app = require('./app');
 
 if (require.main === module) {
     // If this module is run directly (not imported), start the server

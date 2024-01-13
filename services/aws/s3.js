@@ -5,7 +5,7 @@ const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
 const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
 const DEFAULT_BUCKET_NAME = process.env.BUCKET_NAME || 'notas-dev-s3';
 
-AWS.config.update({ region: AWS_REGION, accessKeyId: AWS_ACCESS_KEY_ID, secretAccessKey: AWS_SECRET_ACCESS_KEY });
+AWS.config.update({region: AWS_REGION, accessKeyId: AWS_ACCESS_KEY_ID, secretAccessKey: AWS_SECRET_ACCESS_KEY});
 
 exports.upload = async (key, buffer, contentType, bucket = DEFAULT_BUCKET_NAME) => {
     const s3 = new AWS.S3();
@@ -67,7 +67,7 @@ exports.uploadJson = async (json, key) => {
         Bucket: BUCKET_NAME,
         Key: key,
         Body: JSON.stringify(json),
-        ContentType: "application/json"
+        ContentType: 'application/json'
     };
     return await s3.upload(params).promise();
 };

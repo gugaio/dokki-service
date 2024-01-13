@@ -1,6 +1,5 @@
 const documentService = require('./documentService');
 const s3 = require('./aws/s3');
-const { Document } = require('../business/models');
 const mongo = require('./aws/mongo');
 
 const uuid = require('uuid');
@@ -13,14 +12,13 @@ jest.mock('./aws/s3', () => {
   return {
     upload: jest.fn(),
     download: jest.fn(() => 'file buffer contents')
-  }});
+  }
+});
 
 jest.mock('./aws/mongo', () => {
-  const documentData = { S3Path: "dataset/adc83ea4-20f7-4ef5-a53a-51f35bda5979.jpg"};
-  return { 
-    insert: jest.fn(),
-    get: jest.fn(() => documentData)
-  };
+  const documentData = {S3Path: 'dataset/adc83ea4-20f7-4ef5-a53a-51f35bda5979.jpg'};
+  return {insert: jest.fn(),
+    get: jest.fn(() => documentData)};
 });
 
 describe('uploaderService', () => {
@@ -37,12 +35,11 @@ describe('uploaderService', () => {
       const FILEPATH = 'originalFileName.jpg';
       const BUFFER = 'file buffer contents';
       const CONTENT_TYPE = 'image/jpg';
-      const PREFIX = 'dataset';      
-      
+      const PREFIX = 'dataset';
       const EXPECTED_S3_KEY = `${PREFIX}/${MOCK_UUID_KEY}.jpg`;
-      const EXPECTED_RESULT =  {"uuidKey": MOCK_UUID_KEY, "s3Key": `${PREFIX}/${MOCK_UUID_KEY}.jpg`};
+      const EXPECTED_RESULT = {'uuidKey': MOCK_UUID_KEY, 's3Key': `${PREFIX}/${MOCK_UUID_KEY}.jpg`};
 
-      let result = await documentService.upload(FILEPATH, BUFFER, PREFIX);
+      const result = await documentService.upload(FILEPATH, BUFFER, PREFIX);
 
       expect(s3.upload).toHaveBeenCalledTimes(1);
       expect(s3.upload).toHaveBeenCalledWith(EXPECTED_S3_KEY, BUFFER, CONTENT_TYPE);
@@ -51,7 +48,6 @@ describe('uploaderService', () => {
       expect(result).toEqual(EXPECTED_RESULT);
     });
   });
-
 
 
   describe('download', () => {

@@ -11,17 +11,17 @@ jest.mock('aws-sdk', () => {
   const mockResult = {
     promise: jest.fn().mockResolvedValue({
       Body: FAKE_BODY,
-    }) 
+    })
   }
-  const S3Instance = { 
-	  upload: jest.fn(() => mockResult), 
-	  getObject: jest.fn(() => mockResult)
+  const S3Instance = {
+    upload: jest.fn(() => mockResult),
+    getObject: jest.fn(() => mockResult)
   };
-  const MOCK_AWS_MODULE = { 
-	  S3: jest.fn(() => S3Instance), 
-	  config: { 
-		  update: jest.fn() 
-	  } 
+  const MOCK_AWS_MODULE = {
+    S3: jest.fn(() => S3Instance),
+    config: {
+    update: jest.fn()
+    }
   };
   return MOCK_AWS_MODULE;
 });
@@ -33,25 +33,25 @@ describe('s3', () => {
   });
 
   describe('upload', () => {
-    it('should upload a buffer using S3 upload with expected parameters', async () => {   
+    it('should upload a buffer using S3 upload with expected parameters', async () => {
       const S3_KEY = `0000000.jpg`;
       const buffer = Buffer.from('test');
       const contentType = 'image/jpeg';
-      const EXPECTED_S3_INPUT = {"Key": S3_KEY, "Body": buffer, "ContentType": contentType, "Bucket": DEFAULT_BUCKET_NAME};         
+      const EXPECTED_S3_INPUT = {'Key': S3_KEY, 'Body': buffer, 'ContentType': contentType, 'Bucket': DEFAULT_BUCKET_NAME};
 
       await upload(S3_KEY, buffer, contentType);
 
-      expect(AWS.S3().upload).toHaveBeenCalledTimes(1);      
+      expect(AWS.S3().upload).toHaveBeenCalledTimes(1);
       expect(AWS.S3().upload).toHaveBeenCalledWith(EXPECTED_S3_INPUT);
     });
   });
 
   describe('download', () => {
-    it('it should return response Body from S3 download method', async () => {      
-      const S3_KEY = `9999999.jpg`;  
-      const EXPECTED_S3_INPUT = {"Key": S3_KEY, "Bucket": DEFAULT_BUCKET_NAME};  
+    it('it should return response Body from S3 download method', async () => {
+      const S3_KEY = `9999999.jpg`;
+      const EXPECTED_S3_INPUT = {'Key': S3_KEY, 'Bucket': DEFAULT_BUCKET_NAME};
 
-      let result = await download(S3_KEY);
+      const result = await download(S3_KEY);
 
       expect(AWS.S3().getObject).toHaveBeenCalledTimes(1);
       expect(AWS.S3().getObject).toHaveBeenCalledWith(EXPECTED_S3_INPUT);

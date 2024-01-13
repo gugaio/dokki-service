@@ -6,7 +6,7 @@ const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
 const TABLE_NAME = 'document';
 const AWS_REGION = process.env.AWS_REGION || 'us-west-2';
 
-AWS.config.update({ region: AWS_REGION, accessKeyId: AWS_ACCESS_KEY_ID, secretAccessKey: AWS_SECRET_ACCESS_KEY });
+AWS.config.update({region: AWS_REGION, accessKeyId: AWS_ACCESS_KEY_ID, secretAccessKey: AWS_SECRET_ACCESS_KEY});
 
 exports.insert = async (uuid, originalName, s3FilePath) => {
   const docClient = new AWS.DynamoDB.DocumentClient();
@@ -20,7 +20,7 @@ exports.insert = async (uuid, originalName, s3FilePath) => {
     },
   };
 
-  await docClient.put(params).promise();  
+  await docClient.put(params).promise();
 };
 
 exports.get = async (uuid) => {
@@ -34,7 +34,7 @@ exports.get = async (uuid) => {
   };
 
   try {
-    let result = await docClient.get(params).promise();
+    const result = await docClient.get(params).promise();
     return result.Item;
   } catch (error) {
     console.error(`Error getting ${uuid}: ${error}`);
@@ -53,7 +53,7 @@ exports.scan = async (fieldName) => {
   };
 
   try {
-    let result = await docClient.scan(params).promise();
+    const result = await docClient.scan(params).promise();
     const ids = result.Items.map(item => {
       return {id: item.docid, originalName: item.originalName, s3Path: item.S3Path, docType: item.docType}
     });
@@ -74,7 +74,7 @@ exports.scanTextMistakes = async () => {
   };
 
   try {
-    let result = await docClient.scan(params).promise();
+    const result = await docClient.scan(params).promise();
     const ids = result.Items.map(item => {
       return {id: item.docid, originalName: item.originalName, s3Path: item.S3Path, docType: item.docType, textMistakes: item.textMistakes, ocr: item.ocr}
     });
@@ -87,7 +87,6 @@ exports.scanTextMistakes = async () => {
 
 exports.updateOCR = async (docid, docType, ocr, labels, textMistakes) => {
   const docClient = new AWS.DynamoDB.DocumentClient();
-  
   const params = {
     TableName: TABLE_NAME,
     Key: {
