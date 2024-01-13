@@ -2,9 +2,9 @@ const express = require('express');
 const router = express.Router();
 const uploader = require('../middleware/uploader');
 
-const {ExpressValidator} = require('express-validator');
-const {body} = new ExpressValidator({
-    isOcrJsonValid: pages => {
+const { body } = require('express-validator');
+
+const isOcrJsonValid = (pages) => {
         if (!pages || !Array.isArray(pages) || pages.length == 0) {
             throw new Error('OCR Json must have at least one page');
         }
@@ -14,8 +14,7 @@ const {body} = new ExpressValidator({
             }
         });
         return true;
-    },
-});
+    }
 
 //  Import controllers
 const documentController = require('../controllers/documentController');
@@ -26,7 +25,7 @@ router.get('/documents', documentController.getDocuments);
 router.get('/documents/:id', documentController.getDocument);
 router.post('/documents', uploader.single('file'), documentController.uploadDocument);
 
-router.post('/documents/:id/ocr', body('pages').isOcrJsonValid(), metadataController.ocr);
+router.post('/documents/:id/ocr', body('pages').custom(isOcrJsonValid), metadataController.ocr);
 
 
 router.get('/ping', (req, res) => {
