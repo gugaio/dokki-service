@@ -28,4 +28,9 @@ router.post('/documents', uploader.single('file'), documentController.uploadDocu
 
 router.post('/documents/:id/ocr', body('pages').isOcrJsonValid(), metadataController.ocr);
 
+
+router.get('/ping', (req, res) => {
+    res.send('pong');
+});
+
 module.exports = router;
