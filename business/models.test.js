@@ -40,7 +40,6 @@ describe('Document Model Test', () => {
 });
 
 
-
 describe('Ocr Model Test', () => {
     let mongoServer;
 
@@ -76,7 +75,7 @@ describe('Ocr Model Test', () => {
         expect(savedOcr.mistakes).toBe(ocrData.mistakes);
         expect(savedOcr.updateTime).toBe(ocrData.updateTime);
         expect(savedOcr.updateTime).toStrictEqual(mockCurrentTime);
-    }); 
+    });
 
     // Cleanup the tests
     afterAll(async () => {

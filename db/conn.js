@@ -19,7 +19,7 @@ function connect(callback) {
         pass: process.env.MONGO_PASSWORD,
         useNewUrlParser: true,
         useUnifiedTopology: true});
-}   
+}
 
 // Export the connection object
 module.exports = connect;

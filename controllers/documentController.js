@@ -10,7 +10,7 @@ const getDocuments = (req, res) => {
             res.send(data);
         }).catch((err) => {
             res.status(500).send(err);
-        });    
+        });
     } catch (error) {
         res.status(500).send(error);
     }
@@ -27,7 +27,7 @@ const getDocument = async (req, res) => {
     });
 };
 
-const uploadDocument = async (req, res)  => {
+const uploadDocument = async (req, res) => {
     if (!req.file) {
         logger.warn('No file uploadmetadataServiceed');
         res.status(HTTP_CODE_BAD_REQUEST).json({ error: 'No file uploaded' });
@@ -48,6 +48,6 @@ const uploadDocument = async (req, res)  => {
 
 module.exports = {
     getDocument,
-    getDocuments,    
+    getDocuments,
     uploadDocument
 };

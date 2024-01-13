@@ -1,5 +1,5 @@
 // @/models.js
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const datetimeService = require('../services/datetimeService');
 
 
@@ -41,7 +41,7 @@ const OcrSchema = new mongoose.Schema({
   },
 });
 
-const Document = mongoose.model("Document", DocumentSchema);
-const Ocr = mongoose.model("Ocr", OcrSchema);
+const Document = mongoose.model('Document', DocumentSchema);
+const Ocr = mongoose.model('Ocr', OcrSchema);
 
 module.exports = { Document, Ocr };

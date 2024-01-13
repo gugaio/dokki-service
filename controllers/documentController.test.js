@@ -8,25 +8,25 @@ jest.mock('../services/documentService');
 describe('Documents', () => {
 
     beforeAll(() => {
-		uuidKey = '123456789';
-		s3Key = 'dataset/123456789.jpg';
-  	});
+        uuidKey = '123456789';
+        s3Key = 'dataset/123456789.jpg';
+    });
 
     afterEach(() => {
-		jest.clearAllMocks();    
-	});
+        jest.clearAllMocks();
+    });
 
 
     describe('POST /documents', () => {
 
         it('should upload a file to S3 and return the file URL', async () => {
-        const mockData = { uuidKey:uuidKey, s3Key:s3Key};
+        const mockData = { uuidKey: uuidKey, s3Key: s3Key};
         documentService.upload.mockResolvedValue(mockData);
-        
+
         const filename = 'test.jpg';
-        const buffer = Buffer.from('test');    
+        const buffer = Buffer.from('test');
         const mimeType = 'image/jpeg';
-        const outputExpectedResult = { id: uuidKey, s3Key: s3Key};        
+        const outputExpectedResult = { id: uuidKey, s3Key: s3Key};
 
         const endpoint = '/documents';
         const res = await supertest(app)
@@ -57,7 +57,6 @@ describe('Documents', () => {
 
         it('responds with 500 if service throws', async () => {
             documentService.tail.mockRejectedValue(new Error('Bad things happened'));
-        
             await supertest(app)
             .get('/documents')
             .expect('Content-Type', /json/)
@@ -69,14 +68,13 @@ describe('Documents', () => {
 
 
         it('should return content of file', async () => {
-            const  mockData = {mockField: "mock contents"};  
+            const mockData = {mockField: 'mock contents'};
             documentService.download.mockResolvedValue(mockData);
 
             const key = uuidKey;
             const endpoint = `/documents/${key}`;
 
             const res = await supertest(app).get(endpoint);
-    
             expect(res.status).toBe(200);
             expect(documentService.download).toHaveBeenCalledTimes(1);
             expect(documentService.download).toHaveBeenCalledWith(key);
@@ -84,10 +82,10 @@ describe('Documents', () => {
         });
 
         it('should return 404 if key not exist', async () => {
-            const  mockData = {mockField: "mock contents"};  
+            const mockData = {mockField: 'mock contents'};
             documentService.download.mockResolvedValue(mockData);
 
-            const key = "notexist";
+            const key = 'notexist';
             const endpoint = `/documents/${key}`;
 
             const res = await supertest(app).get(endpoint);
@@ -99,6 +97,5 @@ describe('Documents', () => {
       });
 
     });
-    
 
 });

@@ -1,4 +1,4 @@
-const { ExpressValidator, validationResult } = require('express-validator');
+const {validationResult} = require('express-validator');
 
 const metadataService = require('../services/metadataService');
 
