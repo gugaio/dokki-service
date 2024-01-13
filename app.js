@@ -1,29 +1,40 @@
 const express = require('express');
 const multer = require('multer');
 const cors = require('cors');
-
+const { ExpressValidator, validationResult } = require('express-validator');
 const connect = require('./db/conn');
-
-const { Document } = require('./business/models');
-
 const logger = require('./logger');
+const router = require('./routers/router');
 
 const documentService = require('./services/documentService');
 const metadataService = require('./services/metadataService');
+require('dotenv').config();
 
 const services = {
     document: documentService,
     metadata: metadataService
 };
 
-require('dotenv').config();
-
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-const DEFAULT_LAST_N = 10;
+const { body } = new ExpressValidator({
+    isOcrJsonValid: pages => {
+        if (!pages || !Array.isArray(pages) || pages.length == 0) {
+            throw new Error('OCR Json must have at least one page');
+        }
+        pages.forEach(page => {
+            if (!page.blocks || !Array.isArray(page.blocks)) {
+                throw new Error('Each OCR page must have the blocks field');
+            }
+        });
+        return true;
+    },
+});
+
 const HTTP_CODE_BAD_REQUEST = 400;
+const HTTP_CODE_UNPROCESSABLE_ENTITY = 422;
 const HTTP_CODE_SERVER_ERROR = 500;
 
 
@@ -37,13 +48,16 @@ const fileFilter = (req, file, cb) => {
         cb(null, false);
     }
 }
-const upload = multer({storage: storage, fileFilter: fileFilter});
+const upload = multer({ storage: storage, fileFilter: fileFilter });
 
+
+app.use('/', router);
+/*
 // ROUTES
 app.post('/documents', upload.single('file'), async (req, res) => {
     if (!req.file) {
-	    logger.warn('No file uploadmetadataServiceed');
-        res.status(HTTP_CODE_BAD_REQUEST).json({error: 'No file uploaded'});
+        logger.warn('No file uploadmetadataServiceed');
+        res.status(HTTP_CODE_BAD_REQUEST).json({ error: 'No file uploaded' });
         return;
     }
 
@@ -51,8 +65,8 @@ app.post('/documents', upload.single('file'), async (req, res) => {
     logger.info(`Uploading ${originalname}`);
 
     services.document.upload(originalname, buffer).then((data) => {
-	    console.log(`Upload request completed for ${originalname}. UUID: ${data.uuidKey}`);
-        res.json({id: data.uuidKey, s3Key: data.s3Key});
+        console.log(`Upload request completed for ${originalname}. UUID: ${data.uuidKey}`);
+        res.json({ id: data.uuidKey, s3Key: data.s3Key });
     }).catch((err) => {
         logger.error(`Upload failed for ${originalname}. Original error: ${err}`);
         res.status(HTTP_CODE_BAD_REQUEST).json(err);
@@ -70,7 +84,7 @@ app.get('/documents/', async (req, res) => {
 });
 
 app.get('/documents/:id', async (req, res) => {
-    const id  = req.params.id;
+    const id = req.params.id;
     console.log(`Dowload image request received for ${id}`);
     services.document.download(id).then((data) => {
         res.send(data);
@@ -79,16 +93,23 @@ app.get('/documents/:id', async (req, res) => {
     });
 });
 
-app.post('/documents/:id/ocr', async (req, res) => {
-    const uuidDoc  = req.params.id;
-    const ocrJson = req.body;    
+app.post('/documents/:id/ocr', body('pages').isOcrJsonValid(), async (req, res) => {
+
+    const validationErros = validationResult(req);
+    if (!validationErros.isEmpty()) {
+        const errors = validationErros.array();
+        return res.status(HTTP_CODE_UNPROCESSABLE_ENTITY).json(errors);
+    }
+
+    const uuidDoc = req.params.id;
+    const ocrJson = req.body;
     services.metadata.ocr(uuidDoc, ocrJson).then((savedOcr) => {
         res.send(savedOcr);
     }).catch((err) => {
         res.json(err);
     });
 });
-
+*/
 
 /*
 
@@ -149,8 +170,8 @@ if (require.main === module) {
         console.log('Connected to MongoDB');
         app.listen(port, () => {
             console.log(`*** Server is running on port ${port}`);
-          });
+        });
     })
-    
-  }
-  
+
+}
+

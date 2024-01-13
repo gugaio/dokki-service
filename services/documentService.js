@@ -20,8 +20,8 @@ async function download(key) {
   return result;
 }
 
-async function last(n) {
-  let items = await mongo.last(n);
+async function tail(limit) {
+  let items = await mongo.document.tail(limit);
   return items;
 }
 
@@ -35,5 +35,5 @@ function _generateS3Key(originalName, prefix) {
 module.exports = {
   upload,
   download,
-  last
+  tail
 };

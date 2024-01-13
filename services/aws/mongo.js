@@ -15,7 +15,7 @@ document.get = async (uuid) => {
   return result;
 };
 
-document.last = async (n) => {
+document.tail = async (n) => {
   const result = await Document.find().sort({ updateTime: -1 }).limit(n);
   return result;
 };

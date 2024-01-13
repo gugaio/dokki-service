@@ -13,7 +13,7 @@ jest.mock('./services/documentService', () => {
 
 jest.mock('./services/metadataService', () => {
     const uuidKey= '123456789';
-    const  rawOcr= {mockField: "mock contents"}
+    const  rawOcr= {pages: [{blocks: []}]}
     const uploadMockResult = { uuidKey: uuidKey, rawOcr: rawOcr};
     return {
     ocr: jest.fn().mockResolvedValue(uploadMockResult)
@@ -51,7 +51,7 @@ describe('App', () => {
         const mimeType = 'image/jpeg';
         const outputExpectedResult = { id: uuidKey, s3Key: s3Key};
 
-		const endpoint = '/documents';
+		    const endpoint = '/documents';
         const res = await request(app)
           .post(endpoint)
           .attach('file', buffer, { filename, contentType: mimeType });
@@ -72,6 +72,20 @@ describe('App', () => {
 
 
     describe('GET /documents/key', () => {
+
+        it('should return list of documents', async () => {
+            const endpoint = `/documents`;
+            const res = await request(app).get(endpoint);
+            expect(res.status).toBe(200);
+        });
+
+        it('should return list of documents at limit', async () => {
+          const limit = 10;
+          const endpoint = `/documents?limit=${limit}`;
+          const res = await request(app).get(endpoint);
+          expect(res.status).toBe(200);
+      });
+
 
         it('should return content of file', async () => {
             const key = uuidKey;
@@ -101,21 +115,64 @@ describe('App', () => {
 
     describe('POST /documents/:id/ocr', () => {
 
-      it('should post a ocr json', async () => {        
+      it('api should return 422 if ocr json has no pages field', async () => {        
         const uuidKey= '123456789';
-        const  rawOcr= {mockField: "mock contents"}
-        const ocrMockResult = { uuidKey: uuidKey, rawOcr: rawOcr};
+        const  ocrJson= {}
 
 		    const endpoint = `/documents/${uuidKey}/ocr`;
         const response = await request(app)
           .post(endpoint)
-          .send({ name: 'test' })
+          .send(ocrJson)
           .set('Accept', 'application/json')
           .expect('Content-Type', /json/)
-          .expect(200); // expect 200 OK
+          .expect(422); // expect 422 - Unprocessable Entity
+      });
 
+      it('api should return 422 if ocr json pages field is empty', async () => {        
+        const uuidKey= '123456789';
+        const  ocrJson= {pages: []}
+
+		    const endpoint = `/documents/${uuidKey}/ocr`;
+        const response = await request(app)
+          .post(endpoint)
+          .send(ocrJson)
+          .set('Accept', 'application/json')
+          .expect('Content-Type', /json/)
+          .expect(422); // expect 422 - Unprocessable Entity 
+      });
+
+      it('api should return 422 if any ocr json page doenst have blocks field', async () => {        
+        const uuidKey= '123456789';
+        const  ocrJson= {pages: [{}]}
+
+		    const endpoint = `/documents/${uuidKey}/ocr`;
+        const response = await request(app)
+          .post(endpoint)
+          .send(ocrJson)
+          .set('Accept', 'application/json')
+          .expect('Content-Type', /json/)
+          .expect(422); // expect 422 - Unprocessable Entity
+      });
+
+      it('api should return 200 if ocr json is valid', async () => {        
+        const uuidKey= '123456789';
+        const  ocrJson= {pages: [{blocks: []}]}
+        const ocrMockResult = { uuidKey: uuidKey, rawOcr: ocrJson};
+
+		    const endpoint = `/documents/${uuidKey}/ocr`;
+        const response = await request(app)
+          .post(endpoint)
+          .send(ocrJson)
+          .set('Accept', 'application/json')
+          .expect('Content-Type', /json/)
+          .expect(200); // expect 200 - OK 
+
+          expect(metadataService.ocr).toHaveBeenCalledTimes(1);
+          expect(metadataService.ocr).toHaveBeenCalledWith(uuidKey, ocrJson);
           expect(response.body).toEqual(ocrMockResult);
       });
+
+      
 
     });
 

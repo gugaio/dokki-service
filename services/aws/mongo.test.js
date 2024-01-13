@@ -29,9 +29,9 @@ describe('Mongo Test', () => {
         expect(fetchedDocument.uuid).toBe(uuid);
     });
 
-    it('list documents successfully', async () => {
-        const lastN = 1;
-        const documents = await mongo.document.last(lastN);
+    it('tail documents successfully', async () => {
+        const limit = 1;
+        const documents = await mongo.document.tail(limit);
 
         // Should return at least one document
         expect(documents.length).toBeGreaterThanOrEqual(1);
