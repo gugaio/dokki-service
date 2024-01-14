@@ -30,8 +30,6 @@ const getDocument = async (req, res) => {
 };
 
 const uploadDocument = async (req, res) => {
-    console.log('Upload request received');
-    console.log(req);
     if (!req.file) {
         logger.warn('No file uploadmetadataServiceed');
         res.status(HTTP_CODE_BAD_REQUEST).json({ error: 'No file uploaded' });
