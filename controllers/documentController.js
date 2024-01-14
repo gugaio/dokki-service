@@ -1,6 +1,8 @@
 const documentService = require('../services/documentService');
 const logger = require('../logger');
+
 const DEFAULT_LIMIT = 10;
+const HTTP_CODE_BAD_REQUEST = 400;
 
 const getDocuments = (req, res) => {
     try {
@@ -28,6 +30,8 @@ const getDocument = async (req, res) => {
 };
 
 const uploadDocument = async (req, res) => {
+    console.log('Upload request received');
+    console.log(req);
     if (!req.file) {
         logger.warn('No file uploadmetadataServiceed');
         res.status(HTTP_CODE_BAD_REQUEST).json({ error: 'No file uploaded' });

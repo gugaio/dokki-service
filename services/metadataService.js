@@ -5,6 +5,12 @@ async function ocr(uuidDoc, ocr) {
   return savedOcr;
 }
 
+async function getOcr(uuidDoc) {
+  const ocr = await mongo.ocr.get(uuidDoc);
+  return ocr;
+}
+
 module.exports = {
-  ocr
+  ocr,
+  getOcr
 };

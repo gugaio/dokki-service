@@ -14,8 +14,8 @@ router.get('/documents', documentController.getDocuments);
 router.get('/documents/:id', documentController.getDocument);
 router.post('/documents', uploader.single('file'), documentController.uploadDocument);
 
-router.post('/documents/:id/ocr', body('pages').custom(isOcrJsonValid), metadataController.ocr);
-
+router.post('/ocr/:id', body('pages').custom(isOcrJsonValid), metadataController.ocr);
+router.get('/ocr/:id', metadataController.getOcr);
 
 router.get('/ping', (req, res) => {
     res.send('pong');

@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 3000
 
 # Start the Node.js application
-CMD [ "node", "server.js" ]
+CMD [ "node","--inspect=0.0.0.0", "server.js" ]

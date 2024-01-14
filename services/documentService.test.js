@@ -17,8 +17,9 @@ jest.mock('./aws/s3', () => {
 
 jest.mock('./aws/mongo', () => {
   const documentData = {S3Path: 'dataset/adc83ea4-20f7-4ef5-a53a-51f35bda5979.jpg'};
-  return {insert: jest.fn(),
-    get: jest.fn(() => documentData)};
+  return {
+    document: {insert: jest.fn(),
+    get: jest.fn(() => documentData)}};
 });
 
 describe('uploaderService', () => {
@@ -43,8 +44,8 @@ describe('uploaderService', () => {
 
       expect(s3.upload).toHaveBeenCalledTimes(1);
       expect(s3.upload).toHaveBeenCalledWith(EXPECTED_S3_KEY, BUFFER, CONTENT_TYPE);
-      expect(mongo.insert).toHaveBeenCalledTimes(1);
-      expect(mongo.insert).toHaveBeenCalledWith(MOCK_UUID_KEY, FILEPATH, EXPECTED_S3_KEY);
+      expect(mongo.document.insert).toHaveBeenCalledTimes(1);
+      expect(mongo.document.insert).toHaveBeenCalledWith(MOCK_UUID_KEY, FILEPATH, EXPECTED_S3_KEY);
       expect(result).toEqual(EXPECTED_RESULT);
     });
   });
@@ -59,8 +60,8 @@ describe('uploaderService', () => {
 
       expect(s3.download).toHaveBeenCalledTimes(1);
       expect(s3.download).toHaveBeenCalledWith(MOCK_S3_KEY);
-      expect(mongo.get).toHaveBeenCalledTimes(1);
-      expect(mongo.get).toHaveBeenCalledWith(MOCK_S3_KEY);
+      expect(mongo.document.get).toHaveBeenCalledTimes(1);
+      expect(mongo.document.get).toHaveBeenCalledWith(MOCK_S3_KEY);
       expect(result).toEqual(EXPECTED_BUFFER);
     });
   });

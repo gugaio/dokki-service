@@ -29,6 +29,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
+      - "9229:9229"
     environment:
       MONGO_URL: mongodb://root:Abc123@mongo:27017/development?authSource=admin
       MONGO_INITDB_ROOT_USERNAME: root

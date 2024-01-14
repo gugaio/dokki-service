@@ -21,6 +21,16 @@ const ocr = async (req, res) => {
     });
 };
 
+const getOcr = async (req, res) => {
+    const uuidDoc = req.params.id;
+    metadataService.getOcr(uuidDoc).then((ocr) => {
+        res.json(ocr);
+    }).catch((err) => {
+        res.json(err);
+    });
+};
+
 module.exports = {
     ocr,
+    getOcr
 };
