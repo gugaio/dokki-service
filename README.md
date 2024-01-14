@@ -1,8 +1,13 @@
-# Upload Service
+# Rodando apenas o mongo no Docker
+docker-compose up --detach mongo
+docker-compose up --detach mongo-express
 
-...
+# Rodando buildando e rodando todos os servicos no Docker
+docker-compose build --no-cache 
+docker-compose up
 
 ## Endpoints
-
-curl -F "file=@/mnt/c/Users/gugai/OneDrive/Documents/Notas/nota.jpg" "http://127.0.0.1:3000/upload?agent=dokki&sender=guga"
+POST /documents
+GET  /documents
+GET  /documents/:uuid
 
