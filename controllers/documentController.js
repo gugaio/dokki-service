@@ -36,10 +36,24 @@ const uploadDocument = async (req, res) => {
         return;
     }
 
+    const to = req.params.to;
+    if (!to) {
+        logger.warn('No destination specified');
+        res.status(HTTP_CODE_BAD_REQUEST).json({ error: 'No destination specified' });
+        return;
+    }
+    const from = req.params.from;
+    if (!from) {
+        logger.warn('No source specified');
+        res.status(HTTP_CODE_BAD_REQUEST).json({ error: 'No source specified' });
+        return;
+    }
+    const prefix = `${to}/${from}`;
+
     const { buffer, originalname } = req.file;
     logger.info(`Uploading ${originalname}`);
 
-    documentService.upload(originalname, buffer).then((data) => {
+    documentService.upload(originalname, buffer, prefix).then((data) => {
         console.log(`Upload request completed for ${originalname}. UUID: ${data.uuidKey}`);
         res.json({ id: data.uuidKey, s3Key: data.s3Key });
     }).catch((err) => {

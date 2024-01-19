@@ -12,7 +12,7 @@ const metadataController = require('../controllers/metadataController');
 //  Define routes
 router.get('/documents', documentController.getDocuments);
 router.get('/documents/:id', documentController.getDocument);
-router.post('/documents', uploader.single('file'), documentController.uploadDocument);
+router.post('/documents/:to/:from', uploader.single('file'), documentController.uploadDocument);
 
 router.post('/ocr/:id', body('pages').custom(isOcrJsonValid), metadataController.ocr);
 router.get('/ocr/:id', metadataController.getOcr);

@@ -20,24 +20,62 @@ describe('Documents', () => {
     describe('POST /documents', () => {
 
         it('should upload a file to S3 and return the file URL', async () => {
-        const mockData = { uuidKey: uuidKey, s3Key: s3Key};
-        documentService.upload.mockResolvedValue(mockData);
+            const mockData = { uuidKey: uuidKey, s3Key: s3Key};
+            documentService.upload.mockResolvedValue(mockData);
 
-        const filename = 'test.jpg';
-        const buffer = Buffer.from('test');
-        const mimeType = 'image/jpeg';
-        const outputExpectedResult = { id: uuidKey, s3Key: s3Key};
+            const filename = 'test.jpg';
+            const buffer = Buffer.from('test');
+            const mimeType = 'image/jpeg';
+            const outputExpectedResult = { id: uuidKey, s3Key: s3Key};
 
-        const endpoint = '/documents';
-        const res = await supertest(app)
-            .post(endpoint)
-            .attach('file', buffer, { filename, contentType: mimeType });
+            const to = 'company';
+            const from = 'userx';
+            const endpoint = `/documents/${to}/${from}`;
+            const prefix = `${to}/${from}`;
 
-        expect(res.status).toBe(200);
-        expect(documentService.upload).toHaveBeenCalledTimes(1);
-        expect(documentService.upload).toHaveBeenCalledWith(filename, buffer);
-        expect(res.body).toEqual(outputExpectedResult);
+            const res = await supertest(app)
+                .post(endpoint)
+                .attach('file', buffer, { filename, contentType: mimeType });
+
+            expect(res.status).toBe(200);
+            expect(documentService.upload).toHaveBeenCalledTimes(1);
+            expect(documentService.upload).toHaveBeenCalledWith(filename, buffer, prefix);
+            expect(res.body).toEqual(outputExpectedResult);
         });
+
+        it('should return 404 for missing file', async () => {
+            const to = 'company';
+            const from = 'userx';
+            const endpoint = `/documents/${to}/${from}`;
+
+            const res = await supertest(app).post(endpoint);
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should to and from compose prefix', async () => {
+            const mockData = { uuidKey: uuidKey, s3Key: s3Key};
+            documentService.upload.mockResolvedValue(mockData);
+
+            const to = 'company';
+            const from = 'userx';
+            const endpoint = `/documents/${to}/${from}`;
+
+            const filename = 'test.jpg';
+            const buffer = Buffer.from('test');
+            const mimeType = 'image/jpeg';
+            const prefix = `${to}/${from}`;
+
+            const res = await supertest(app)
+                                .post(endpoint)
+                                .attach('file', buffer, { filename, contentType: mimeType });
+
+            expect(res.status).toBe(200);
+            expect(documentService.upload).toHaveBeenCalledTimes(1);
+            expect(documentService.upload).toHaveBeenCalledWith(filename, buffer, prefix);
+        });
+
+
     });
 
 
