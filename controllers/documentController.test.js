@@ -31,7 +31,6 @@ describe('Documents', () => {
             const to = 'company';
             const from = 'userx';
             const endpoint = `/documents/${to}/${from}`;
-            const prefix = `${to}/${from}`;
 
             const res = await supertest(app)
                 .post(endpoint)
@@ -39,7 +38,7 @@ describe('Documents', () => {
 
             expect(res.status).toBe(200);
             expect(documentService.upload).toHaveBeenCalledTimes(1);
-            expect(documentService.upload).toHaveBeenCalledWith(filename, buffer, prefix);
+            expect(documentService.upload).toHaveBeenCalledWith(filename, buffer, to, from);
             expect(res.body).toEqual(outputExpectedResult);
         });
 
@@ -64,7 +63,6 @@ describe('Documents', () => {
             const filename = 'test.jpg';
             const buffer = Buffer.from('test');
             const mimeType = 'image/jpeg';
-            const prefix = `${to}/${from}`;
 
             const res = await supertest(app)
                                 .post(endpoint)
@@ -72,7 +70,7 @@ describe('Documents', () => {
 
             expect(res.status).toBe(200);
             expect(documentService.upload).toHaveBeenCalledTimes(1);
-            expect(documentService.upload).toHaveBeenCalledWith(filename, buffer, prefix);
+            expect(documentService.upload).toHaveBeenCalledWith(filename, buffer, to, from);
         });
 
 

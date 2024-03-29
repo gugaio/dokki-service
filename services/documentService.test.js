@@ -36,11 +36,13 @@ describe('uploaderService', () => {
       const FILEPATH = 'originalFileName.jpg';
       const BUFFER = 'file buffer contents';
       const CONTENT_TYPE = 'image/jpg';
-      const PREFIX = 'dataset';
+      const TO = 'to';
+      const FROM = 'from';
+      const PREFIX = `${TO}/${FROM}`;
       const EXPECTED_S3_KEY = `${PREFIX}/${MOCK_UUID_KEY}.jpg`;
       const EXPECTED_RESULT = {'uuidKey': MOCK_UUID_KEY, 's3Key': `${PREFIX}/${MOCK_UUID_KEY}.jpg`};
 
-      const result = await documentService.upload(FILEPATH, BUFFER, PREFIX);
+      const result = await documentService.upload(FILEPATH, BUFFER, TO, FROM);
 
       expect(s3.upload).toHaveBeenCalledTimes(1);
       expect(s3.upload).toHaveBeenCalledWith(EXPECTED_S3_KEY, BUFFER, CONTENT_TYPE);

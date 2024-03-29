@@ -4,9 +4,10 @@ const mongo = require('./aws/mongo');
 
 const logger = require('../logger');
 
-async function upload(originalName, buffer, prefix='dataset') {
+async function upload(originalName, buffer, to, from) {
+  const prefix = `${to}/${from}`;
   const {uuidKey, s3Key, contentType} = _generateS3Key(originalName, prefix);
-  logger.info(`Generate uuid ${uuidKey} to ${originalName}. S3 full path: ${s3Key}`);
+  logger.info(`Generate uuid ${uuidKey} to ${originalName} file. S3 full path: ${s3Key}`);
   await s3.upload(s3Key, buffer, contentType);
   await mongo.document.insert(uuidKey, originalName, s3Key);
   return {uuidKey: uuidKey, s3Key: s3Key};

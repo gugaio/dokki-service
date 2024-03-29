@@ -17,13 +17,17 @@ describe('Mongo Test', () => {
         const uuid = '123';
         const originalName = 'test';
         const s3FilePath = 'test/path';
-        const savedDocument = await mongo.document.insert(uuid, originalName, s3FilePath);
+        const to = ':to';
+        const from = ':from';
+        const savedDocument = await mongo.document.insert(uuid, originalName, s3FilePath, to, from);
 
         // Object Id should be defined when successfully saved to MongoDB.
         expect(savedDocument._id).toBeDefined();
         expect(savedDocument.uuid).toBe(uuid);
         expect(savedDocument.originalName).toBe(originalName);
         expect(savedDocument.S3Path).toBe(s3FilePath);
+        expect(savedDocument.to).toBe(to);
+        expect(savedDocument.from).toBe(from);
 
         const fetchedDocument = await mongo.document.get(uuid);
         expect(fetchedDocument.uuid).toBe(uuid);

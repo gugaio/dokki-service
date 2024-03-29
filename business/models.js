@@ -16,6 +16,14 @@ const DocumentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  to: {
+    type: String,
+    required: true,
+  },
+  from: {
+    type: String,
+    required: true,
+  },
   updateTime: {
     type: Date,
     default: datetimeService.currentDatetime

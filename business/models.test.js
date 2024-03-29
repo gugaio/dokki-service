@@ -20,17 +20,20 @@ describe('Document Model Test', () => {
     });
 
     it('create & save document successfully', async () => {
-        const documentData = new Document({ uuid: '123', originalName: 'test', S3Path: 'test/path'});
-        const savedDocument = await documentData.save();
+        const newDocument = new Document({ uuid: '123', originalName: 'test', S3Path: 'test/path', to: ':to', from: ':from' });
+        const savedDocument = await newDocument.save();
 
         // Object Id should be defined when successfully saved to MongoDB.
         expect(savedDocument._id).toBeDefined();
-        expect(savedDocument.uuid).toBe(documentData.uuid);
-        expect(savedDocument.originalName).toBe(documentData.originalName);
-        expect(savedDocument.S3Path).toBe(documentData.S3Path);
-        expect(savedDocument.updateTime).toBe(documentData.updateTime);
+        expect(savedDocument.uuid).toBe(newDocument.uuid);
+        expect(savedDocument.originalName).toBe(newDocument.originalName);
+        expect(savedDocument.S3Path).toBe(newDocument.S3Path);
+        expect(savedDocument.updateTime).toBe(newDocument.updateTime);
         expect(savedDocument.updateTime).toStrictEqual(mockCurrentTime);
+        expect(savedDocument.to).toBe(newDocument.to);
+        expect(savedDocument.from).toBe(newDocument.from);
     });
+    
 
     // Cleanup the tests
     afterAll(async () => {

@@ -4,8 +4,8 @@ const {Document, Ocr} = require('../../business/models');
 
 const document = {}
 
-document.insert = async (uuid, originalName, s3FilePath) => {
-  const documentData = new Document({uuid: uuid, originalName: originalName, S3Path: s3FilePath});
+document.insert = async (uuid, originalName, s3FilePath, to, from) => {
+  const documentData = new Document({uuid: uuid, originalName: originalName, S3Path: s3FilePath, to: to, from: from});
   const savedDocument = await documentData.save();
   return savedDocument;
 };
@@ -20,7 +20,6 @@ document.tail = async (n) => {
   const result = await Document.find().sort({updateTime: -1}).limit(n);
   return result;
 };
-
 
 const ocr = {}
 
