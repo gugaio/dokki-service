@@ -12,6 +12,7 @@ document.insert = async (uuid, originalName, s3FilePath) => {
 
 document.get = async (uuid) => {
   const result = await Document.findOne({uuid: uuid});
+  console.log(result);
   return result;
 };
 
@@ -33,6 +34,11 @@ ocr.get = async (uuid) => {
   const result = await Ocr.findOne({uuid: uuid});
   return result;
 };
+
+ocr.upsert = async (uuid, rawOcr) => {
+  const result = await Ocr.findOneAndUpdate({uuid: uuid}, {rawOcr: rawOcr}, {upsert: true, new: true});
+  return result;
+}
 
 ocr.findOneAndUpdate = async (uuid, rawOcr) => {
   const result = await Ocr.findOneAndUpdate({uuid: uuid}, {rawOcr: rawOcr});

@@ -1,7 +1,8 @@
 const mongo = require('./aws/mongo');
 
-async function ocr(uuidDoc, ocr) {
-  const savedOcr = await mongo.ocr.insert(uuidDoc, ocr);
+async function saveOcr(uuidDoc, ocr) {
+  console.log(`Inserting OCR for ${uuidDoc}`);
+  const savedOcr = await mongo.ocr.upsert(uuidDoc, ocr);
   return savedOcr;
 }
 
@@ -11,6 +12,6 @@ async function getOcr(uuidDoc) {
 }
 
 module.exports = {
-  ocr,
+  saveOcr,
   getOcr
 };
