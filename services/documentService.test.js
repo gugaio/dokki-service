@@ -1,6 +1,6 @@
 const documentService = require('./documentService');
 const s3 = require('./aws/s3');
-const mongo = require('./aws/mongo');
+const mongo = require('../infra/mongo');
 
 const uuid = require('uuid');
 
@@ -15,7 +15,7 @@ jest.mock('./aws/s3', () => {
   }
 });
 
-jest.mock('./aws/mongo', () => {
+jest.mock('../infra/mongo', () => {
   const documentData = {S3Path: 'dataset/adc83ea4-20f7-4ef5-a53a-51f35bda5979.jpg'};
   return {
     document: {insert: jest.fn(),
@@ -47,7 +47,7 @@ describe('uploaderService', () => {
       expect(s3.upload).toHaveBeenCalledTimes(1);
       expect(s3.upload).toHaveBeenCalledWith(EXPECTED_S3_KEY, BUFFER, CONTENT_TYPE);
       expect(mongo.document.insert).toHaveBeenCalledTimes(1);
-      expect(mongo.document.insert).toHaveBeenCalledWith(MOCK_UUID_KEY, FILEPATH, EXPECTED_S3_KEY);
+      expect(mongo.document.insert).toHaveBeenCalledWith(MOCK_UUID_KEY, FILEPATH, EXPECTED_S3_KEY, TO, FROM);
       expect(result).toEqual(EXPECTED_RESULT);
     });
   });

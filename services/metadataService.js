@@ -1,4 +1,4 @@
-const mongo = require('./aws/mongo');
+const mongo = require('../infra/mongo');
 
 async function saveOcr(uuidDoc, ocr) {
   console.log(`Inserting OCR for ${uuidDoc}`);

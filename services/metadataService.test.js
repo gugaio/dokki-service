@@ -1,6 +1,6 @@
 const metadataService = require('./metadataService');
 
-jest.mock('./aws/mongo', () => {
+jest.mock('../infra/mongo', () => {
   const result = {uuid: '123', rawOcr: 'ocr'};
   return {ocr: {
     insert: jest.fn(() => result),
